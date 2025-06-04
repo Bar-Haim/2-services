@@ -1,9 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.10'  // מריץ את כל הפייפליין בתוך קונטיינר שיש בו פייתון
-        }
-    }
+    agent any
 
     parameters {
         choice(name: 'SERVICE', choices: ['service1', 'service2'], description: 'בחרי את הסרוויס להרצה')
@@ -16,23 +12,19 @@ pipeline {
             }
         }
 
-        stage('Build Service 1') {
-            when {
-                expression { params.SERVICE == 'service1' }
-            }
+        stage('הרצת סקריפט') {
             steps {
-                echo "⚙️ מריצה את service1 (app1.py)"
-                sh 'python app1.py'
-            }
-        }
-
-        stage('Build Service 2') {
-            when {
-                expression { params.SERVICE == 'service2' }
-            }
-            steps {
-                echo "⚙️ מריצה את service2 (app2.py)"
-                sh 'python app2.py'
+                script {
+                    if (params.SERVICE == 'service1') {
+                        echo "⚙️ מריצה את service1 (app1.py)"
+                        sh 'python3 app1.py'
+                    } else if (params.SERVICE == 'service2') {
+                        echo "⚙️ מריצה את service2 (app2.py)"
+                        sh 'python3 app2.py'
+                    } else {
+                        error("❌ סרוויס לא תקין")
+                    }
+                }
             }
         }
     }
