@@ -1,7 +1,10 @@
-FROM python:3.10-slim
+FROM jenkins/jenkins:lts
 
-WORKDIR /app
+USER root
 
-COPY app.py .
+# התקנת Docker בתוך Jenkins
+RUN apt-get update && \
+    apt-get install -y docker.io && \
+    usermod -aG docker jenkins
 
-CMD ["python", "app.py"]
+USER jenkins
