@@ -1,27 +1,28 @@
 pipeline {
-    agent any
-
+    agent {
+        docker {
+            image 'python:3.12'
+        }
+    }
     parameters {
         choice(name: 'SERVICE', choices: ['service1', 'service2'], description: 'בחרי את הסרוויס להרצה')
     }
-
     stages {
         stage('הצגת הבחירה') {
             steps {
                 echo "💡 נבחר הסרוויס: ${params.SERVICE}"
             }
         }
-
         stage('הרצת סקריפט') {
             steps {
                 script {
-                    def scriptName = params.SERVICE == 'service1' ? 'app1.py' : 'app2.py'
-                    echo "⚙️ מריצה את ${params.SERVICE} (${scriptName})"
-
-                    // מריץ את הקוד בתוך קונטיינר עם פייתון
-                    sh """
-                    docker run --rm -v \$PWD:/app -w /app python:3.12 python ${scriptName}
-                    """
+                    if (params.SERVICE == 'service1') {
+                        echo "⚙️ מריצה את service1 (app1.py)"
+                        sh 'python app1.py'
+                    } else {
+                        echo "⚙️ מריצה את service2 (app2.py)"
+                        sh 'python app2.py'
+                    }
                 }
             }
         }
