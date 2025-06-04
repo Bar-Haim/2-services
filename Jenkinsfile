@@ -1,5 +1,9 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.10'  // מריץ את כל הפייפליין בתוך קונטיינר שיש בו פייתון
+        }
+    }
 
     parameters {
         choice(name: 'SERVICE', choices: ['service1', 'service2'], description: 'בחרי את הסרוויס להרצה')
@@ -18,7 +22,7 @@ pipeline {
             }
             steps {
                 echo "⚙️ מריצה את service1 (app1.py)"
-                sh 'python3 app1.py'
+                sh 'python app1.py'
             }
         }
 
@@ -28,7 +32,7 @@ pipeline {
             }
             steps {
                 echo "⚙️ מריצה את service2 (app2.py)"
-                sh 'python3 app2.py'
+                sh 'python app2.py'
             }
         }
     }
