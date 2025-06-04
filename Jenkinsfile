@@ -15,15 +15,13 @@ pipeline {
         stage('הרצת סקריפט') {
             steps {
                 script {
-                    if (params.SERVICE == 'service1') {
-                        echo "⚙️ מריצה את service1 (app1.py)"
-                        sh 'python3 app1.py'
-                    } else if (params.SERVICE == 'service2') {
-                        echo "⚙️ מריצה את service2 (app2.py)"
-                        sh 'python3 app2.py'
-                    } else {
-                        error("❌ סרוויס לא תקין")
-                    }
+                    def scriptName = params.SERVICE == 'service1' ? 'app1.py' : 'app2.py'
+                    echo "⚙️ מריצה את ${params.SERVICE} (${scriptName})"
+
+                    // מריץ את הקוד בתוך קונטיינר עם פייתון
+                    sh """
+                    docker run --rm -v \$PWD:/app -w /app python:3.12 python ${scriptName}
+                    """
                 }
             }
         }
